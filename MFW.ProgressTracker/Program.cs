@@ -2,15 +2,21 @@ using MFW.ProgressTracker.Components;
 
 namespace MFW.ProgressTracker;
 
+/// <summary>
+/// Represents the primary entry point for configuring and running the application.
+/// </summary>
 public class Program
 {
+    /// <summary>
+    /// The entry point of the application and its configurations.
+    /// </summary>
+    /// <param name="args">An array of command-line arguments passed to the application.</param>
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddRazorComponents()
-            .AddInteractiveServerComponents();
+        builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
         var app = builder.Build();
 
@@ -18,7 +24,6 @@ public class Program
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
@@ -27,9 +32,9 @@ public class Program
         app.UseStaticFiles();
         app.UseAntiforgery();
 
-        app.MapRazorComponents<App>()
-            .AddInteractiveServerRenderMode();
+        app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
+        // Run the application with the provided configuration.
         app.Run();
     }
 }
