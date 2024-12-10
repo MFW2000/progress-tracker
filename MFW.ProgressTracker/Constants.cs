@@ -6,4 +6,5 @@
 public static class Constants
 {
     public const string ApplicationName = "Progress Tracker";
+    public const string TagLine = "Track your progress across various activities";
 }
