@@ -4,3 +4,6 @@
 # Build
 bin/
 obj/
+
+# LibMan
+lib/
