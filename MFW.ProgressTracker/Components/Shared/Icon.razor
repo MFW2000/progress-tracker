@@ -1,0 +1,58 @@
+﻿@using MFW.ProgressTracker.Enumerations
+
+<i class="@CssClasses"></i>
+
+@code {
+    [Parameter, EditorRequired]
+    public required IconName Name { get; init; }
+
+    [Parameter]
+    public string? CssClass { get; init; }
+
+    private string CssClasses { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        CssClasses = InitializeCssClasses();
+    }
+
+    /// <summary>
+    /// Initialize the required CSS classes for the icon component based on the given parameters.
+    /// </summary>
+    /// <returns>The CSS classes.</returns>
+    private string InitializeCssClasses()
+    {
+        var classes = string.Empty;
+
+        var iconClass = ResolveCssIconClass();
+
+        if (string.IsNullOrEmpty(iconClass))
+        {
+            return classes;
+        }
+
+        classes = $"bi {iconClass}";
+
+        if (string.IsNullOrWhiteSpace(CssClass))
+        {
+            return classes;
+        }
+
+        return classes + $" {CssClass.Trim()}";
+    }
+
+    /// <summary>
+    /// Resolve the CSS icon class from the given icon name enum.
+    /// </summary>
+    /// <returns>The CSS icon class.</returns>
+    private string ResolveCssIconClass()
+    {
+        return Name switch
+        {
+            IconName.InfoCircleFill => "bi-info-circle-fill",
+            IconName.CheckCircleFill => "bi-check-circle-fill",
+            IconName.ExclamationTriangleFill => "bi-exclamation-triangle-fill",
+            _ => string.Empty
+        };
+    }
+}
