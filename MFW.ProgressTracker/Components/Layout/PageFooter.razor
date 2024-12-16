@@ -1,9 +1,9 @@
-﻿<footer class="footer mt-auto py-3 bg-body-tertiary">
+﻿<footer class="footer mt-auto py-1 bg-body-tertiary">
     <div class="container">
-        <span class="text-body-secondary">© @CurrentYear MFW</span>
+        <span class="text-body-secondary">© @_currentYear MFW</span>
     </div>
 </footer>
 
 @code {
-    private int CurrentYear { get; } = TimeProvider.System.GetLocalNow().Year;
+    private int _currentYear = TimeProvider.System.GetLocalNow().Year;
 }

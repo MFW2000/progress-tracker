@@ -1,0 +1,64 @@
+@using MFW.ProgressTracker.Enumerations
+
+<button
+    type="@Type.ToString().ToLowerInvariant()"
+    class="@InitializeCssClasses()"
+    @onclick="OnClick"
+    disabled="@Disabled"
+>
+    @if (Icon != null)
+    {
+        <Icon Name="Icon.Value" CssClass="me-1"/>
+    }
+
+    <span>@Value</span>
+</button>
+
+@code {
+    [Parameter, EditorRequired]
+    public required string Value { get; init; }
+
+    [Parameter, EditorRequired]
+    public required ButtonType Type { get; init; }
+
+    [Parameter, EditorRequired]
+    public required ButtonVariant Variant { get; init; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; init; }
+
+    [Parameter]
+    public IconName? Icon { get; init; }
+
+    [Parameter]
+    public bool Disabled { get; init; }
+
+    [Parameter]
+    public bool Outline { get; init; }
+
+    [Parameter]
+    public string? CssClass { get; init; }
+
+    /// <summary>
+    /// Initialize the required CSS classes for the button component based on the given parameters.
+    /// </summary>
+    /// <returns>The CSS classes.</returns>
+    private string InitializeCssClasses()
+    {
+        var cssClasses = "btn btn-";
+
+        if (Outline && Variant != ButtonVariant.Link)
+        {
+            cssClasses += "outline-";
+        }
+
+        cssClasses += Variant.ToString().ToLowerInvariant();
+
+        if (string.IsNullOrWhiteSpace(CssClass))
+        {
+            return cssClasses;
+        }
+
+        return cssClasses + $" {CssClass.Trim()}";
+    }
+}
