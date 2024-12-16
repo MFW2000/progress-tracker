@@ -1,6 +1,6 @@
 ﻿@using MFW.ProgressTracker.Enumerations
 
-<i class="@CssClasses"></i>
+<i class="@InitializeCssClasses()"></i>
 
 @code {
     [Parameter, EditorRequired]
@@ -9,36 +9,29 @@
     [Parameter]
     public string? CssClass { get; init; }
 
-    private string CssClasses { get; set; } = string.Empty;
-
-    protected override void OnInitialized()
-    {
-        CssClasses = InitializeCssClasses();
-    }
-
     /// <summary>
     /// Initialize the required CSS classes for the icon component based on the given parameters.
     /// </summary>
     /// <returns>The CSS classes.</returns>
     private string InitializeCssClasses()
     {
-        var classes = string.Empty;
+        var cssClasses = string.Empty;
 
         var iconClass = ResolveCssIconClass();
 
         if (string.IsNullOrEmpty(iconClass))
         {
-            return classes;
+            return cssClasses;
         }
 
-        classes = $"bi {iconClass}";
+        cssClasses = $"bi {iconClass}";
 
         if (string.IsNullOrWhiteSpace(CssClass))
         {
-            return classes;
+            return cssClasses;
         }
 
-        return classes + $" {CssClass.Trim()}";
+        return cssClasses + $" {CssClass.Trim()}";
     }
 
     /// <summary>
