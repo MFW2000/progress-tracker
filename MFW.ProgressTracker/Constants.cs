@@ -9,8 +9,14 @@ public static class Constants
     public const string ApplicationName = "Progress Tracker";
     public const string TagLine = "Track your progress across various activities";
 
+    // Common
+    public const string Empty = "Nothing here, yet.";
+
     // Home
     public const string HomeTitle = "Home";
+
+    // Trackers
+    public const string TrackersTitle = "Trackers";
 
     // About
     public const string AboutTitle = "About";
@@ -20,7 +26,8 @@ public static class Constants
     public const string ErrorSubtitle = "An error occurred while processing your request";
     public const string ErrorRequestIdHeading = "Request ID";
 
-    // Aria
+    // Accessibility
     public const string AriaNavigationBar = "Toggle navigation";
     public const string AriaClose = "Close";
+    public const string LoadingSpinner = "Loading...";
 }

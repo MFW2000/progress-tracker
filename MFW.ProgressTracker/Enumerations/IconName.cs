@@ -7,5 +7,7 @@ public enum IconName
 {
     InfoCircleFill,
     CheckCircleFill,
-    ExclamationTriangleFill
+    ExclamationTriangleFill,
+    BoxArrowDown,
+    BoxArrowInDown
 }

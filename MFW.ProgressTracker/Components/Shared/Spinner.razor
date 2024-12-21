@@ -1,0 +1,41 @@
+﻿@using MFW.ProgressTracker.Enumerations
+
+<div class="@InitializeCssClasses()" role="status">
+    <span class="visually-hidden">@AccessibilityText</span>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public required SemanticVariant Variant { get; init; }
+
+    [Parameter]
+    public bool UseGrowingSpinner { get; init; }
+
+    [Parameter]
+    public string AccessibilityText { get; init; } = Constants.LoadingSpinner;
+
+    [Parameter]
+    public string? CssClass { get; init; }
+
+    /// <summary>
+    /// Initialize the required CSS classes for the spinner component based on the given parameters.
+    /// </summary>
+    /// <returns>The CSS classes.</returns>
+    private string InitializeCssClasses()
+    {
+        var cssClasses = "spinner-";
+
+        cssClasses += UseGrowingSpinner
+            ? "grow"
+            : "border";
+
+        cssClasses += $" text-{Variant.ToString().ToLowerInvariant()}";
+
+        if (string.IsNullOrWhiteSpace(CssClass))
+        {
+            return cssClasses;
+        }
+
+        return cssClasses + $" {CssClass.Trim()}";
+    }
+}
