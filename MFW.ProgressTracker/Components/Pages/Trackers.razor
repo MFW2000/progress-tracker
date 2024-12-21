@@ -1,0 +1,62 @@
+﻿@page "/trackers"
+@rendermode InteractiveServer
+@using MFW.ProgressTracker.Services
+@using MFW.ProgressTracker.Components.Shared
+@using MFW.ProgressTracker.Enumerations
+@using MFW.ProgressTracker.Models
+@inject ITrackerService TrackerService
+
+<PageTitle>@Constants.TrackersTitle - @Constants.ApplicationName</PageTitle>
+
+<div class="mt-3 mb-2">
+    <h1>@Constants.TrackersTitle</h1>
+</div>
+
+<div class="mb-2">
+    @* TODO: Implement buttons *@
+    <ActionButton
+        Type="ButtonType.Button"
+        Variant="ButtonVariant.Primary"
+        Value="Import trackers"
+        Icon="IconName.BoxArrowInDown"
+    />
+
+    <ActionButton
+        Type="ButtonType.Button"
+        Variant="ButtonVariant.Primary"
+        Value="Export trackers"
+        Icon="IconName.BoxArrowDown"
+    />
+</div>
+
+<div>
+    @if (_trackers != null)
+    {
+        @if (_trackers.Count > 0)
+        {
+            @* TODO: Show data here. *@
+            <p>Show data here.</p>
+        }
+        else
+        {
+            <Alert Variant="SemanticVariant.Info">
+                <span>@Constants.Empty</span>
+            </Alert>
+        }
+    }
+    else
+    {
+        <Spinner Variant="SemanticVariant.Primary"/>
+    }
+</div>
+
+@code {
+    private List<Tracker>? _trackers;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        _trackers = await TrackerService.GetTrackers();
+
+        StateHasChanged();
+    }
+}
