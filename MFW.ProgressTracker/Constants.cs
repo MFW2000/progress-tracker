@@ -30,4 +30,13 @@ public static class Constants
     public const string AriaNavigationBar = "Toggle navigation";
     public const string AriaClose = "Close";
     public const string LoadingSpinner = "Loading...";
+
+    // Exceptions
+    public const string ReadLocalStorageException =
+        "Tracking data in local storage was corrupted and could not be recovered.";
+    public const string TrackerHasNoNameException = "The tracker item must have a name.";
+    public const string TrackerAlreadyExistsException = "The tracker already exists.";
+    public const string TrackerNotFoundException = "The tracker could not be found.";
+    public const string NoTrackersForUpdateException = "The tracker could not be updated because no trackers were found.";
+    public const string NoTrackersToDeleteException = "The tracker could not be deleted because no trackers were found.";
 }

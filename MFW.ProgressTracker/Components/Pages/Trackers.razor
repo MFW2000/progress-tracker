@@ -1,10 +1,12 @@
 ﻿@page "/trackers"
 @rendermode InteractiveServer
-@using MFW.ProgressTracker.Services
 @using MFW.ProgressTracker.Components.Shared
 @using MFW.ProgressTracker.Enumerations
 @using MFW.ProgressTracker.Models
+@using MFW.ProgressTracker.Services.Interfaces
+@inject IJSRuntime JsRuntime
 @inject ITrackerService TrackerService
+@inject INotificationService NotificationService
 
 <PageTitle>@Constants.TrackersTitle - @Constants.ApplicationName</PageTitle>
 
@@ -26,6 +28,7 @@
         Variant="ButtonVariant.Primary"
         Value="Export trackers"
         Icon="IconName.BoxArrowDown"
+        OnClick="DownloadJson"
     />
 </div>
 
@@ -39,7 +42,7 @@
         }
         else
         {
-            <Alert Variant="SemanticVariant.Info">
+            <Alert Variant="SemanticVariant.Info" ShowIcon>
                 <span>@Constants.Empty</span>
             </Alert>
         }
@@ -55,8 +58,25 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _trackers = await TrackerService.GetTrackers();
+        if (firstRender)
+        {
+            _trackers = await TrackerService.GetTrackers();
 
-        StateHasChanged();
+            StateHasChanged();
+        }
+    }
+
+    private async Task DownloadJson()
+    {
+        var json = await TrackerService.ExportToJson();
+
+        if (string.IsNullOrEmpty(json))
+        {
+            NotificationService.ShowNotification(SemanticVariant.Info, "There is nothing to export.");
+
+            return;
+        }
+
+        await JsRuntime.InvokeVoidAsync("downloadFile", "trackers.json", json);
     }
 }
