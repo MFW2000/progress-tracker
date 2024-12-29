@@ -1,4 +1,6 @@
 using MFW.ProgressTracker.Components;
+using MFW.ProgressTracker.Services;
+using MFW.ProgressTracker.Services.Interfaces;
 
 namespace MFW.ProgressTracker;
 
@@ -17,6 +19,11 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+        // Add injectable services.
+        builder.Services.AddScoped<ITrackerService, TrackerService>();
+
+        builder.Services.AddSingleton<INotificationService, NotificationService>();
 
         var app = builder.Build();
 

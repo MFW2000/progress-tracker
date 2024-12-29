@@ -1,0 +1,84 @@
+﻿@page "/trackers"
+@rendermode InteractiveServer
+@using MFW.ProgressTracker.Components.Shared
+@using MFW.ProgressTracker.Enumerations
+@using MFW.ProgressTracker.Models
+@using MFW.ProgressTracker.Services.Interfaces
+@inject ITrackerService TrackerService
+@inject INotificationService NotificationService
+
+<PageTitle>@Constants.TrackersTitle - @Constants.ApplicationName</PageTitle>
+
+<div class="mt-3 mb-2">
+    <h1>@Constants.TrackersTitle</h1>
+</div>
+
+<div class="mb-2">
+    <ActionButton
+        Type="ButtonType.Button"
+        Variant="ButtonVariant.Primary"
+        Value="Import trackers"
+        Icon="IconName.BoxArrowInDown"
+        OnClick="ImportJson"
+    />
+
+    <ActionButton
+        Type="ButtonType.Button"
+        Variant="ButtonVariant.Primary"
+        Value="Export trackers"
+        Icon="IconName.BoxArrowDown"
+        OnClick="DownloadJson"
+    />
+</div>
+
+<div>
+    @if (_trackers != null)
+    {
+        @if (_trackers.Count > 0)
+        {
+            <p>Show data here.</p>
+        }
+        else
+        {
+            <Alert Variant="SemanticVariant.Info" ShowIcon>
+                <span>@Constants.Empty</span>
+            </Alert>
+        }
+    }
+    else
+    {
+        <Spinner Variant="SemanticVariant.Primary"/>
+    }
+</div>
+
+@code {
+    private List<Tracker>? _trackers;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _trackers = await TrackerService.GetTrackers();
+
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// Responsible for handling the import of a JSON file containing tracker items.
+    /// This functionality has been disabled for now.
+    /// </summary>
+    private void ImportJson()
+    {
+        NotificationService.ShowNotification(SemanticVariant.Info, "This functionality is currently disabled.");
+    }
+
+    /// <summary>
+    /// Responsible for handling the export of a JSON file containing tracker items.
+    /// This functionality has been disabled for now.
+    /// </summary>
+    private void DownloadJson()
+    {
+        NotificationService.ShowNotification(SemanticVariant.Info, "This functionality is currently disabled.");
+    }
+}
