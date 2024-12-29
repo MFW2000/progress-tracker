@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using MFW.ProgressTracker.Enumerations;
+using MFW.ProgressTracker.Exceptions;
 using MFW.ProgressTracker.Models;
 using MFW.ProgressTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
@@ -140,9 +141,11 @@ public class TrackerService(
         await SetTrackers(trackers);
     }
 
-    // TODO: Improve this method so it returns empty notification and json error notification.
+    /// <inheritdoc/>
     public async Task<string> ExportToJson()
     {
+        // TODO: Consider leaving out the IDs of the tracker items.
+
         var trackers = await GetTrackers();
 
         if (trackers.Count == 0)
@@ -156,25 +159,53 @@ public class TrackerService(
         }
         catch (Exception exception)
         {
-            logger.LogError(exception, "");
-            notificationService.ShowNotification(SemanticVariant.Danger, "");
-        }
+            logger.LogError(exception, Constants.ExportTrackersException);
 
-        return string.Empty;
+            throw new ProgressTrackerException(Constants.ExportTrackersException);
+        }
     }
 
+    /// <inheritdoc/>
     public async Task ImportFromJson(string json)
     {
-        var trackers = JsonSerializer.Deserialize<List<Tracker>>(json) ?? [];
+        // TODO: Verify the imported tracker data before saving.
+        // TODO: This method currently replaces everything upon import, this should be changed.
 
-        await SetTrackers(trackers);
+        List<Tracker> importedTrackers;
+
+        try
+        {
+            importedTrackers = JsonSerializer.Deserialize<List<Tracker>>(json) ?? [];
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, Constants.ImportTrackersException);
+
+            throw new ProgressTrackerException(Constants.ImportTrackersException);
+        }
+
+        if (importedTrackers.Count == 0)
+        {
+            notificationService.ShowNotification(SemanticVariant.Warning, Constants.NoTrackersForImportException);
+        }
+
+        await SetTrackers(importedTrackers);
     }
 
+    /// <summary>
+    /// Stores the given list of tracker items into the local browser storage.
+    /// </summary>
+    /// <param name="trackers">List of tracker items to save.</param>
     private async Task SetTrackers(List<Tracker> trackers)
     {
         await localStorage.SetAsync(StorageKey, JsonSerializer.Serialize(trackers));
     }
 
+    /// <summary>
+    /// Validates the data of a <see cref="Tracker"/> object to ensure it meets required criteria.
+    /// </summary>
+    /// <param name="tracker">The tracker item to validate.</param>
+    /// <exception cref="ArgumentException">Thrown if a property does not meet the required criteria.</exception>
     private static void ValidateTrackerData(Tracker tracker)
     {
         if (string.IsNullOrWhiteSpace(tracker.Name))

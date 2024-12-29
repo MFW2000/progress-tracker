@@ -83,7 +83,11 @@
         }
     }
 
-    // TODO: Add documentation.
+    /// <summary>
+    /// Prepares all necessary CSS for the notification component.
+    /// </summary>
+    /// <param name="variant">The variant of the notification, is null by default for hiding the notification.</param>
+    /// <returns>The CSS classes.</returns>
     private string GetNotificationClass(SemanticVariant? variant = null)
     {
         if (variant == null)
@@ -103,7 +107,11 @@
         return cssClasses + " show";
     }
 
-    // TODO: Add documentation.
+    /// <summary>
+    /// Resolve the icon to be used by the notification component.
+    /// The info icon will be used by default.
+    /// </summary>
+    /// <returns>The icon to be used.</returns>
     private IconName GetIconName(SemanticVariant variant)
     {
         return variant switch

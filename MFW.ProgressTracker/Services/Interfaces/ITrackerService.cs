@@ -1,4 +1,5 @@
-﻿using MFW.ProgressTracker.Models;
+﻿using MFW.ProgressTracker.Exceptions;
+using MFW.ProgressTracker.Models;
 
 namespace MFW.ProgressTracker.Services.Interfaces;
 
@@ -34,7 +35,17 @@ public interface ITrackerService
     /// <param name="trackerId">The ID of the tracker to be deleted.</param>
     Task DeleteTracker(Guid trackerId);
 
+    /// <summary>
+    /// Exports all tracker items to a JSON string.
+    /// </summary>
+    /// <returns>A JSON string representation of the trackers, or an empty string if there are no trackers.</returns>
+    /// <exception cref="ProgressTrackerException">Thrown when an error occurs during the serialization process.</exception>
     Task<string> ExportToJson();
 
+    /// <summary>
+    /// Imports tracker items using the given JSON string.
+    /// </summary>
+    /// <param name="json">The JSON string containing tracker items.</param>
+    /// <exception cref="ProgressTrackerException">Thrown when an error occurs during the deserialization process.</exception>
     Task ImportFromJson(string json);
 }

@@ -4,7 +4,6 @@
 @using MFW.ProgressTracker.Enumerations
 @using MFW.ProgressTracker.Models
 @using MFW.ProgressTracker.Services.Interfaces
-@inject IJSRuntime JsRuntime
 @inject ITrackerService TrackerService
 @inject INotificationService NotificationService
 
@@ -15,12 +14,12 @@
 </div>
 
 <div class="mb-2">
-    @* TODO: Implement buttons *@
     <ActionButton
         Type="ButtonType.Button"
         Variant="ButtonVariant.Primary"
         Value="Import trackers"
         Icon="IconName.BoxArrowInDown"
+        OnClick="ImportJson"
     />
 
     <ActionButton
@@ -37,7 +36,6 @@
     {
         @if (_trackers.Count > 0)
         {
-            @* TODO: Show data here. *@
             <p>Show data here.</p>
         }
         else
@@ -66,17 +64,21 @@
         }
     }
 
-    private async Task DownloadJson()
+    /// <summary>
+    /// Responsible for handling the import of a JSON file containing tracker items.
+    /// This functionality has been disabled for now.
+    /// </summary>
+    private void ImportJson()
     {
-        var json = await TrackerService.ExportToJson();
+        NotificationService.ShowNotification(SemanticVariant.Info, "This functionality is currently disabled.");
+    }
 
-        if (string.IsNullOrEmpty(json))
-        {
-            NotificationService.ShowNotification(SemanticVariant.Info, "There is nothing to export.");
-
-            return;
-        }
-
-        await JsRuntime.InvokeVoidAsync("downloadFile", "trackers.json", json);
+    /// <summary>
+    /// Responsible for handling the export of a JSON file containing tracker items.
+    /// This functionality has been disabled for now.
+    /// </summary>
+    private void DownloadJson()
+    {
+        NotificationService.ShowNotification(SemanticVariant.Info, "This functionality is currently disabled.");
     }
 }

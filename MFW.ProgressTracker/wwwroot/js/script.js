@@ -7,9 +7,7 @@
  * @param content The content inside the file to be downloaded.
  */
 function downloadFile(filename, content) {
-    // TODO: Test the JSON formatter.
-    const formattedContent = JSON.stringify(content, null, 2);
-    const blob = new Blob([formattedContent], { type: 'application/json' });
+    const blob = new Blob([content], { type: 'application/json' });
     const link = document.createElement("a");
 
     link.href = window.URL.createObjectURL(blob);

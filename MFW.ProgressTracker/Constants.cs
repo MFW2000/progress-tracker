@@ -33,10 +33,16 @@ public static class Constants
 
     // Exceptions
     public const string ReadLocalStorageException =
-        "Tracking data in local storage was corrupted and could not be recovered.";
+        "Tracker item data in local storage was corrupted and could not be recovered.";
     public const string TrackerHasNoNameException = "The tracker item must have a name.";
-    public const string TrackerAlreadyExistsException = "The tracker already exists.";
-    public const string TrackerNotFoundException = "The tracker could not be found.";
-    public const string NoTrackersForUpdateException = "The tracker could not be updated because no trackers were found.";
-    public const string NoTrackersToDeleteException = "The tracker could not be deleted because no trackers were found.";
+    public const string TrackerAlreadyExistsException = "The tracker item already exists.";
+    public const string TrackerNotFoundException = "The tracker item could not be found.";
+    public const string NoTrackersForUpdateException =
+        "The tracker could not be updated because no tracker items were found.";
+    public const string NoTrackersToDeleteException =
+        "The tracker could not be deleted because no tracker items were found.";
+    public const string ExportTrackersException =
+        "Something went wrong while exporting the tracker items to a JSON file.";
+    public const string ImportTrackersException = "The given JSON file contains errors and cannot be imported.";
+    public const string NoTrackersForImportException = "The given JSON file contains no tracker items.";
 }
