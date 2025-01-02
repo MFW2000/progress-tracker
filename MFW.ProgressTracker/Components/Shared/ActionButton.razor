@@ -5,6 +5,7 @@
     class="@InitializeCssClasses()"
     @onclick="OnClick"
     disabled="@Disabled"
+    @attributes="AdditionalAttributes"
 >
     @if (Icon != null)
     {
@@ -26,6 +27,9 @@
 
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; init; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; init; }
 
     [Parameter]
     public IconName? Icon { get; init; }

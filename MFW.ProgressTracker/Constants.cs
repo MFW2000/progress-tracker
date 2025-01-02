@@ -17,6 +17,10 @@ public static class Constants
 
     // Trackers
     public const string TrackersTitle = "Trackers";
+    public const string TrackersSubtitle = "Manage you tracker items here";
+    public const string CreateTrackerLinkText = "Create tracker";
+    public const string ImportButtonText = "Import trackers";
+    public const string ExportButtonText = "Export trackers";
 
     // About
     public const string AboutTitle = "About";

@@ -11,24 +11,37 @@
 
 <div class="mt-3 mb-2">
     <h1>@Constants.TrackersTitle</h1>
+
+    <p>@Constants.TrackersSubtitle.</p>
 </div>
 
-<div class="mb-2">
-    <ActionButton
-        Type="ButtonType.Button"
-        Variant="ButtonVariant.Primary"
-        Value="Import trackers"
-        Icon="IconName.BoxArrowInDown"
-        OnClick="ImportJson"
-    />
+<div class="mb-2 d-md-flex">
+    <div class="d-md-flex d-grid mb-2 mb-md-0">
+        <ActionLink
+            Value="@Constants.CreateTrackerLinkText"
+            Link="/trackers/create"
+            ButtonVariant="SemanticVariant.Primary"
+            Icon="IconName.PlusLg"
+        />
+    </div>
 
-    <ActionButton
-        Type="ButtonType.Button"
-        Variant="ButtonVariant.Primary"
-        Value="Export trackers"
-        Icon="IconName.BoxArrowDown"
-        OnClick="DownloadJson"
-    />
+    <div class="d-md-flex d-grid gap-2 ms-md-auto">
+        <ActionButton
+            Type="ButtonType.Button"
+            Variant="ButtonVariant.Secondary"
+            Value="@Constants.ImportButtonText"
+            Icon="IconName.BoxArrowInDown"
+            OnClick="ImportJson"
+        />
+
+        <ActionButton
+            Type="ButtonType.Button"
+            Variant="ButtonVariant.Secondary"
+            Value="@Constants.ExportButtonText"
+            Icon="IconName.BoxArrowDown"
+            OnClick="DownloadJson"
+        />
+    </div>
 </div>
 
 <div>

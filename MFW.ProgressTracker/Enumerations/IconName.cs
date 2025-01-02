@@ -9,5 +9,6 @@ public enum IconName
     CheckCircleFill,
     ExclamationTriangleFill,
     BoxArrowDown,
-    BoxArrowInDown
+    BoxArrowInDown,
+    PlusLg
 }
