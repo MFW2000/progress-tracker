@@ -131,9 +131,7 @@ public class TrackerService(
 
         if (trackers.Count == 0)
         {
-            notificationService.ShowNotification(SemanticVariant.Warning, Constants.NoTrackersToDeleteException);
-
-            return;
+            throw new ProgressTrackerException(Constants.NoTrackersToDeleteException);
         }
 
         trackers.RemoveAll(tracker => tracker.Id == trackerId);

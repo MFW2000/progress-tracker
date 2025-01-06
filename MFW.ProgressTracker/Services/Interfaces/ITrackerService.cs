@@ -33,6 +33,7 @@ public interface ITrackerService
     /// Delete the tracker item with the given ID from local browser storage.
     /// </summary>
     /// <param name="trackerId">The ID of the tracker to be deleted.</param>
+    /// <exception cref="ProgressTrackerException">Thrown when no tracker items could be found.</exception>
     Task DeleteTracker(Guid trackerId);
 
     /// <summary>

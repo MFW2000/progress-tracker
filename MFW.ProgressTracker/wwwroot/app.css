@@ -11,3 +11,7 @@ body {
 .blazor-error-boundary::after {
     content: "An error has occurred."
 }
+
+form {
+    max-width: 600px;
+}

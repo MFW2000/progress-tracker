@@ -11,6 +11,9 @@ public static class Constants
 
     // Common
     public const string Empty = "Nothing here, yet.";
+    public const string Name = "Name";
+    public const string Save = "Save";
+    public const string BackToList = "Back to list";
 
     // Home
     public const string HomeTitle = "Home";
@@ -18,7 +21,8 @@ public static class Constants
     // Trackers
     public const string TrackersTitle = "Trackers";
     public const string TrackersSubtitle = "Manage you tracker items here";
-    public const string CreateTrackerLinkText = "Create tracker";
+    public const string CreateTrackerTitle = "Create tracker";
+    public const string CreateTrackerSubtitle = "Create a new tracker item";
     public const string ImportButtonText = "Import trackers";
     public const string ExportButtonText = "Export trackers";
 
@@ -38,6 +42,7 @@ public static class Constants
     // Exceptions
     public const string ReadLocalStorageException =
         "Tracker item data in local storage was corrupted and could not be recovered.";
+    public const string TrackerCouldNotBeSavedException = "The tracker item could not be saved.";
     public const string TrackerHasNoNameException = "The tracker item must have a name.";
     public const string TrackerAlreadyExistsException = "The tracker item already exists.";
     public const string TrackerNotFoundException = "The tracker item could not be found.";
@@ -49,4 +54,8 @@ public static class Constants
         "Something went wrong while exporting the tracker items to a JSON file.";
     public const string ImportTrackersException = "The given JSON file contains errors and cannot be imported.";
     public const string NoTrackersForImportException = "The given JSON file contains no tracker items.";
+
+    // Notifications
+    public const string TrackerCreated = "Tracker item created.";
+    public const string TrackerDeleted = "Tracker item deleted.";
 }

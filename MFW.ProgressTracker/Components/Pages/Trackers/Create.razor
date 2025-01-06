@@ -1,4 +1,66 @@
 ﻿@page "/trackers/create"
+@rendermode InteractiveServer
+@using MFW.ProgressTracker.Models
+@using MFW.ProgressTracker.Services.Interfaces
+@using MFW.ProgressTracker.Components.Shared
+@using MFW.ProgressTracker.Enumerations
+@inject ITrackerService TrackerService
+@inject INotificationService NotificationService
+@inject NavigationManager NavigationManager
+
+<PageTitle>@Constants.CreateTrackerTitle - @Constants.ApplicationName</PageTitle>
+
+<div class="mt-3 mb-2">
+    <h1>@Constants.CreateTrackerTitle</h1>
+
+    <p>@Constants.CreateTrackerSubtitle.</p>
+
+    <hr/>
+</div>
+
+<EditForm method="post" Model="Model" OnValidSubmit="AddTracker" FormName="create-tracker">
+    <DataAnnotationsValidator/>
+
+    <div class="mb-3">
+        <label for="name" class="form-label">@Constants.Name</label>
+
+        <InputText id="name" @bind-Value="Model!.Name" class="form-control" required/>
+
+        <ValidationMessage For="() => Model.Name" class="text-danger-emphasis mt-1 small"/>
+    </div>
+
+    <div>
+        <ActionButton Value="@Constants.Save" Type="ButtonType.Submit" Variant="ButtonVariant.Primary"/>
+
+        <ActionLink Value="@Constants.BackToList" Link="/trackers" ButtonVariant="SemanticVariant.Secondary"/>
+    </div>
+</EditForm>
 
 @code {
+    [SupplyParameterFromForm]
+    private Tracker? Model { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Model ??= new Tracker
+        {
+            Id = Guid.NewGuid(),
+            Name = string.Empty
+        };
+    }
+
+    public async Task AddTracker()
+    {
+        if (Model == null)
+        {
+            NotificationService.ShowNotification(SemanticVariant.Danger, Constants.TrackerCouldNotBeSavedException);
+
+            return;
+        }
+
+        await TrackerService.CreateTracker(Model);
+
+        NotificationService.ShowNotification(SemanticVariant.Success, Constants.TrackerCreated);
+        NavigationManager.NavigateTo("/trackers");
+    }
 }

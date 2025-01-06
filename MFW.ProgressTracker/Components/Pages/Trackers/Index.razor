@@ -2,8 +2,10 @@
 @rendermode InteractiveServer
 @using MFW.ProgressTracker.Components.Shared
 @using MFW.ProgressTracker.Enumerations
+@using MFW.ProgressTracker.Exceptions
 @using MFW.ProgressTracker.Models
 @using MFW.ProgressTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Components.QuickGrid
 @inject ITrackerService TrackerService
 @inject INotificationService NotificationService
 
@@ -18,7 +20,7 @@
 <div class="mb-2 d-md-flex">
     <div class="d-md-flex d-grid mb-2 mb-md-0">
         <ActionLink
-            Value="@Constants.CreateTrackerLinkText"
+            Value="@Constants.CreateTrackerTitle"
             Link="/trackers/create"
             ButtonVariant="SemanticVariant.Primary"
             Icon="IconName.PlusLg"
@@ -45,11 +47,22 @@
 </div>
 
 <div>
+    @* TODO: Improve table styling. *@
     @if (_trackers != null)
     {
-        @if (_trackers.Count > 0)
+        @if (_trackers.Any())
         {
-            <p>Show data here.</p>
+            <QuickGrid Class="table" Items="_trackers">
+                <PropertyColumn Property="tracker => tracker.Name"/>
+
+                <TemplateColumn Context="tracker">
+                    <ActionButton
+                        Type="ButtonType.Button"
+                        Variant="ButtonVariant.Danger"
+                        Icon="IconName.Trash"
+                        OnClick="() => DeleteTracker(tracker.Id)"/>
+                </TemplateColumn>
+            </QuickGrid>
         }
         else
         {
@@ -65,16 +78,37 @@
 </div>
 
 @code {
-    private List<Tracker>? _trackers;
+    private IQueryable<Tracker>? _trackers;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _trackers = await TrackerService.GetTrackers();
+            var result = await TrackerService.GetTrackers();
+
+            _trackers = result.AsQueryable();
 
             StateHasChanged();
         }
+    }
+
+    // TODO: Add documentation.
+    private async Task DeleteTracker(Guid trackerId)
+    {
+        try
+        {
+            await TrackerService.DeleteTracker(trackerId);
+        }
+        catch (ProgressTrackerException exception)
+        {
+            NotificationService.ShowNotification(SemanticVariant.Danger, exception.Message);
+
+            return;
+        }
+
+        NotificationService.ShowNotification(SemanticVariant.Success, Constants.TrackerDeleted);
+
+        StateHasChanged();
     }
 
     /// <summary>
