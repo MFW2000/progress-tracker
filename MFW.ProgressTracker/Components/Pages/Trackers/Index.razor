@@ -1,12 +1,14 @@
 ﻿@page "/trackers"
 @rendermode InteractiveServer
 @using MFW.ProgressTracker.Components.Shared
+@using MFW.ProgressTracker.Domain.Interfaces
 @using MFW.ProgressTracker.Enumerations
 @using MFW.ProgressTracker.Exceptions
 @using MFW.ProgressTracker.Models
 @using MFW.ProgressTracker.Services.Interfaces
 @using Microsoft.AspNetCore.Components.QuickGrid
-@inject ITrackerService TrackerService
+@implements IDisposable
+@inject ITrackerState TrackerState
 @inject INotificationService NotificationService
 
 <PageTitle>@Constants.TrackersTitle - @Constants.ApplicationName</PageTitle>
@@ -47,15 +49,23 @@
 </div>
 
 <div>
-    @* TODO: Improve table styling. *@
     @if (_trackers != null)
     {
         @if (_trackers.Any())
         {
             <QuickGrid Class="table" Items="_trackers">
-                <PropertyColumn Property="tracker => tracker.Name"/>
+                <PropertyColumn Property="tracker => tracker.Name" Sortable="true"/>
 
-                <TemplateColumn Context="tracker">
+                <PropertyColumn Property="tracker => tracker.Description" Sortable="true"/>
+
+                <TemplateColumn Context="tracker" Title="@Constants.Actions">
+                    <ActionButton
+                        Type="ButtonType.Button"
+                        Variant="ButtonVariant.Secondary"
+                        Icon="IconName.Pencil"
+                        OnClick="EditTracker"
+                    />
+
                     <ActionButton
                         Type="ButtonType.Button"
                         Variant="ButtonVariant.Danger"
@@ -80,24 +90,54 @@
 @code {
     private IQueryable<Tracker>? _trackers;
 
+    protected override void OnInitialized()
+    {
+        TrackerState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        TrackerState.OnChange -= StateHasChanged;
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var result = await TrackerService.GetTrackers();
-
-            _trackers = result.AsQueryable();
-
-            StateHasChanged();
+            await TrackerState.InitializeTrackers();
         }
+
+        SetQueryableTrackers();
+
+        StateHasChanged();
     }
 
-    // TODO: Add documentation.
+    /// <summary>
+    /// Set the trackers from the <see cref="TrackerState"/> as queryable items.
+    /// </summary>
+    private void SetQueryableTrackers()
+    {
+        _trackers = TrackerState.Trackers.AsQueryable();
+    }
+
+    /// <summary>
+    /// Responsible for redirecting the user to the edit page.
+    /// This functionality has been disabled for now.
+    /// </summary>
+    private void EditTracker()
+    {
+        NotificationService.ShowNotification(SemanticVariant.Info, "This functionality is currently disabled.");
+    }
+
+    /// <summary>
+    /// Call the <see cref="TrackerState"/> to remove the given tracker.
+    /// </summary>
+    /// <param name="trackerId">The ID of the tracker to remove.</param>
     private async Task DeleteTracker(Guid trackerId)
     {
         try
         {
-            await TrackerService.DeleteTracker(trackerId);
+            await TrackerState.RemoveTracker(trackerId);
         }
         catch (ProgressTrackerException exception)
         {

@@ -4,6 +4,7 @@
 @using MFW.ProgressTracker.Services.Interfaces
 @using MFW.ProgressTracker.Components.Shared
 @using MFW.ProgressTracker.Enumerations
+@using MFW.ProgressTracker.Exceptions
 @inject ITrackerService TrackerService
 @inject INotificationService NotificationService
 @inject NavigationManager NavigationManager
@@ -14,9 +15,9 @@
     <h1>@Constants.CreateTrackerTitle</h1>
 
     <p>@Constants.CreateTrackerSubtitle.</p>
-
-    <hr/>
 </div>
+
+<hr/>
 
 <EditForm method="post" Model="Model" OnValidSubmit="AddTracker" FormName="create-tracker">
     <DataAnnotationsValidator/>
@@ -27,6 +28,14 @@
         <InputText id="name" @bind-Value="Model!.Name" class="form-control" required/>
 
         <ValidationMessage For="() => Model.Name" class="text-danger-emphasis mt-1 small"/>
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">@Constants.Description</label>
+
+        <InputText id="description" @bind-Value="Model!.Description" class="form-control" required/>
+
+        <ValidationMessage For="() => Model.Description" class="text-danger-emphasis mt-1 small"/>
     </div>
 
     <div>
@@ -45,10 +54,15 @@
         Model ??= new Tracker
         {
             Id = Guid.NewGuid(),
-            Name = string.Empty
+            Name = string.Empty,
+            Description = string.Empty
         };
     }
 
+    /// <summary>
+    /// Save a new tracker item by calling the tracker service where the item is verified and saved.
+    /// A notification will be shown if a exception is thrown.
+    /// </summary>
     public async Task AddTracker()
     {
         if (Model == null)
@@ -58,7 +72,16 @@
             return;
         }
 
-        await TrackerService.CreateTracker(Model);
+        try
+        {
+            await TrackerService.CreateTracker(Model);
+        }
+        catch (ProgressTrackerException exception)
+        {
+            NotificationService.ShowNotification(SemanticVariant.Danger, exception.Message);
+
+            return;
+        }
 
         NotificationService.ShowNotification(SemanticVariant.Success, Constants.TrackerCreated);
         NavigationManager.NavigateTo("/trackers");

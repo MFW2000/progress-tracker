@@ -21,6 +21,7 @@ public interface ITrackerService
     /// Validate and create a new tracker item to save in the local browser storage.
     /// </summary>
     /// <param name="newTracker">The tracker to be created.</param>
+    /// <exception cref="ProgressTrackerException">Thrown if the new tracker is not valid.</exception>
     Task CreateTracker(Tracker newTracker);
 
     /// <summary>

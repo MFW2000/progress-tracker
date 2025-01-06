@@ -12,8 +12,10 @@ public static class Constants
     // Common
     public const string Empty = "Nothing here, yet.";
     public const string Name = "Name";
+    public const string Description = "Description";
     public const string Save = "Save";
     public const string BackToList = "Back to list";
+    public const string Actions = "Actions";
 
     // Home
     public const string HomeTitle = "Home";
