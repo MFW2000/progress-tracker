@@ -1,0 +1,32 @@
+﻿@page "/Error"
+@using System.Diagnostics
+
+<PageTitle>@Constants.ErrorTitle - @Constants.ApplicationName</PageTitle>
+
+<div class="mt-3">
+    <h1 class="text-danger">@Constants.ErrorTitle</h1>
+
+    <h2 class="text-danger">@Constants.ErrorSubtitle.</h2>
+
+    @if (_showRequestId)
+    {
+        <p>
+            <strong>@Constants.ErrorRequestIdHeading:</strong>
+            <code>@_requestId</code>
+        </p>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? _requestId;
+    private bool _showRequestId;
+
+    protected override void OnInitialized()
+    {
+        _requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+        _showRequestId = !string.IsNullOrEmpty(_requestId);
+    }
+}

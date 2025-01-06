@@ -1,0 +1,136 @@
+﻿@rendermode InteractiveServer
+@using MFW.ProgressTracker.Enumerations
+@using MFW.ProgressTracker.Services.Interfaces
+@using MFW.ProgressTracker.Components.Shared
+@implements IDisposable
+@inject INotificationService NotificationService
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast align-items-center @_additionalCssClass" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <Icon Name="_iconName" CssClass="me-1"/>
+
+                <span>@_message</span>
+            </div>
+
+            <button
+                type="button"
+                class="btn-close btn-close-white me-2 m-auto"
+                @onclick="HideNotification"
+                aria-label="@Constants.AriaClose"
+            >
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool _showNotification;
+    private string _message = string.Empty;
+    private string _additionalCssClass = string.Empty;
+    private IconName _iconName = IconName.CheckCircleFill;
+    private CancellationTokenSource _cts = new();
+
+    private const int NotificationDelayInMilliseconds = 5000;
+
+    protected override void OnInitialized()
+    {
+        NotificationService.OnShowNotification += ShowNotification;
+    }
+
+    public void Dispose()
+    {
+        NotificationService.OnShowNotification -= ShowNotification;
+    }
+
+    /// <summary>
+    /// Handles the show notification event by initializing the notification data.
+    /// Starts by cancelling the previous timer and starting a new one at the end.
+    /// </summary>
+    /// <param name="variant">The variant of the notification.</param>
+    /// <param name="message">The message to show.</param>
+    private void ShowNotification(SemanticVariant variant, string message)
+    {
+        _cts.Cancel();
+        _cts = new CancellationTokenSource();
+
+        _showNotification = true;
+        _message = message;
+        _iconName = GetIconName(variant);
+        _additionalCssClass = GetNotificationClass(variant);
+
+        InvokeAsync(StateHasChanged);
+
+        _ = AutoHideNotification(NotificationDelayInMilliseconds, _cts.Token);
+    }
+
+    /// <summary>
+    /// Handles the hide notification event by hiding the notification from the user.
+    /// Starts by cancelling any ongoing timer.
+    /// </summary>
+    private void HideNotification()
+    {
+        _cts.Cancel();
+
+        _showNotification = false;
+        _additionalCssClass = GetNotificationClass();
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Automatically hides the notification by counting down from the given delay time.
+    /// If the cancellation token was not already cancelled, the notification will be hidden.
+    /// </summary>
+    /// <param name="delayInMilliseconds">The notification delay time in milliseconds</param>
+    /// <param name="token">The token used to cancel the countdown operation before it completes.</param>
+    private async Task AutoHideNotification(int delayInMilliseconds, CancellationToken token)
+    {
+        await Task.Delay(delayInMilliseconds, token);
+
+        if (!token.IsCancellationRequested)
+        {
+            HideNotification();
+        }
+    }
+
+    /// <summary>
+    /// Prepares all necessary CSS for the notification component.
+    /// </summary>
+    /// <param name="variant">The variant of the notification, is null by default for hiding the notification.</param>
+    /// <returns>The CSS classes.</returns>
+    private string GetNotificationClass(SemanticVariant? variant = null)
+    {
+        if (variant == null)
+        {
+            return string.Empty;
+        }
+
+        var variantString = variant.Value.ToString().ToLowerInvariant();
+
+        var cssClasses = $"text-{variantString}-emphasis border border-{variantString} bg-{variantString}-subtle";
+
+        if (!_showNotification)
+        {
+            return cssClasses;
+        }
+
+        return cssClasses + " show";
+    }
+
+    /// <summary>
+    /// Resolve the icon to be used by the notification component.
+    /// The info icon will be used by default.
+    /// </summary>
+    /// <returns>The icon to be used.</returns>
+    private IconName GetIconName(SemanticVariant variant)
+    {
+        return variant switch
+        {
+            SemanticVariant.Success => IconName.CheckCircleFill,
+            SemanticVariant.Warning or SemanticVariant.Danger => IconName.ExclamationTriangleFill,
+            _ => IconName.InfoCircleFill
+        };
+    }
+}
