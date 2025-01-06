@@ -5,19 +5,24 @@
     class="@InitializeCssClasses()"
     @onclick="OnClick"
     disabled="@Disabled"
+    @attributes="AdditionalAttributes"
 >
-    @if (Icon != null)
+    @if (Icon != null && !string.IsNullOrWhiteSpace(Value))
     {
         <Icon Name="Icon.Value" CssClass="me-1"/>
     }
+    else if (Icon != null && string.IsNullOrWhiteSpace(Value))
+    {
+        <Icon Name="Icon.Value"/>
+    }
 
-    <span>@Value</span>
+    @if (!string.IsNullOrWhiteSpace(Value))
+    {
+        <span>@Value</span>
+    }
 </button>
 
 @code {
-    [Parameter, EditorRequired]
-    public required string Value { get; init; }
-
     [Parameter, EditorRequired]
     public required ButtonType Type { get; init; }
 
@@ -25,7 +30,13 @@
     public required ButtonVariant Variant { get; init; }
 
     [Parameter]
+    public string? Value { get; init; }
+
+    [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; init; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; init; }
 
     [Parameter]
     public IconName? Icon { get; init; }

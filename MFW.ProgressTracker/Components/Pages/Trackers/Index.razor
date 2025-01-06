@@ -1,0 +1,171 @@
+﻿@page "/trackers"
+@rendermode InteractiveServer
+@using MFW.ProgressTracker.Components.Shared
+@using MFW.ProgressTracker.Domain.Interfaces
+@using MFW.ProgressTracker.Enumerations
+@using MFW.ProgressTracker.Exceptions
+@using MFW.ProgressTracker.Models
+@using MFW.ProgressTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Components.QuickGrid
+@implements IDisposable
+@inject ITrackerState TrackerState
+@inject INotificationService NotificationService
+
+<PageTitle>@Constants.TrackersTitle - @Constants.ApplicationName</PageTitle>
+
+<div class="mt-3 mb-2">
+    <h1>@Constants.TrackersTitle</h1>
+
+    <p>@Constants.TrackersSubtitle.</p>
+</div>
+
+<div class="mb-2 d-md-flex">
+    <div class="d-md-flex d-grid mb-2 mb-md-0">
+        <ActionLink
+            Value="@Constants.CreateTrackerTitle"
+            Link="/trackers/create"
+            ButtonVariant="SemanticVariant.Primary"
+            Icon="IconName.PlusLg"
+        />
+    </div>
+
+    <div class="d-md-flex d-grid gap-2 ms-md-auto">
+        <ActionButton
+            Type="ButtonType.Button"
+            Variant="ButtonVariant.Secondary"
+            Value="@Constants.ImportButtonText"
+            Icon="IconName.BoxArrowInDown"
+            OnClick="ImportJson"
+        />
+
+        <ActionButton
+            Type="ButtonType.Button"
+            Variant="ButtonVariant.Secondary"
+            Value="@Constants.ExportButtonText"
+            Icon="IconName.BoxArrowDown"
+            OnClick="DownloadJson"
+        />
+    </div>
+</div>
+
+<div>
+    @if (_trackers != null)
+    {
+        @if (_trackers.Any())
+        {
+            <QuickGrid Class="table" Items="_trackers">
+                <PropertyColumn Property="tracker => tracker.Name" Sortable="true"/>
+
+                <PropertyColumn Property="tracker => tracker.Description" Sortable="true"/>
+
+                <TemplateColumn Context="tracker" Title="@Constants.Actions">
+                    <ActionButton
+                        Type="ButtonType.Button"
+                        Variant="ButtonVariant.Secondary"
+                        Icon="IconName.Pencil"
+                        OnClick="EditTracker"
+                    />
+
+                    <ActionButton
+                        Type="ButtonType.Button"
+                        Variant="ButtonVariant.Danger"
+                        Icon="IconName.Trash"
+                        OnClick="() => DeleteTracker(tracker.Id)"/>
+                </TemplateColumn>
+            </QuickGrid>
+        }
+        else
+        {
+            <Alert Variant="SemanticVariant.Info" ShowIcon>
+                <span>@Constants.Empty</span>
+            </Alert>
+        }
+    }
+    else
+    {
+        <Spinner Variant="SemanticVariant.Primary"/>
+    }
+</div>
+
+@code {
+    private IQueryable<Tracker>? _trackers;
+
+    protected override void OnInitialized()
+    {
+        TrackerState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        TrackerState.OnChange -= StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await TrackerState.InitializeTrackers();
+        }
+
+        SetQueryableTrackers();
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Set the trackers from the <see cref="TrackerState"/> as queryable items.
+    /// </summary>
+    private void SetQueryableTrackers()
+    {
+        _trackers = TrackerState.Trackers.AsQueryable();
+    }
+
+    /// <summary>
+    /// Responsible for redirecting the user to the edit page.
+    /// This functionality has been disabled for now.
+    /// </summary>
+    private void EditTracker()
+    {
+        NotificationService.ShowNotification(SemanticVariant.Info, "This functionality is currently disabled.");
+    }
+
+    /// <summary>
+    /// Call the <see cref="TrackerState"/> to remove the given tracker.
+    /// </summary>
+    /// <param name="trackerId">The ID of the tracker to remove.</param>
+    private async Task DeleteTracker(Guid trackerId)
+    {
+        try
+        {
+            await TrackerState.RemoveTracker(trackerId);
+        }
+        catch (ProgressTrackerException exception)
+        {
+            NotificationService.ShowNotification(SemanticVariant.Danger, exception.Message);
+
+            return;
+        }
+
+        NotificationService.ShowNotification(SemanticVariant.Success, Constants.TrackerDeleted);
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Responsible for handling the import of a JSON file containing tracker items.
+    /// This functionality has been disabled for now.
+    /// </summary>
+    private void ImportJson()
+    {
+        NotificationService.ShowNotification(SemanticVariant.Info, "This functionality is currently disabled.");
+    }
+
+    /// <summary>
+    /// Responsible for handling the export of a JSON file containing tracker items.
+    /// This functionality has been disabled for now.
+    /// </summary>
+    private void DownloadJson()
+    {
+        NotificationService.ShowNotification(SemanticVariant.Info, "This functionality is currently disabled.");
+    }
+}

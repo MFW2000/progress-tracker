@@ -2,6 +2,7 @@
 @using MFW.ProgressTracker.Enumerations
 @using MFW.ProgressTracker.Services.Interfaces
 @using MFW.ProgressTracker.Components.Shared
+@implements IDisposable
 @inject INotificationService NotificationService
 
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -13,7 +14,13 @@
                 <span>@_message</span>
             </div>
 
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" @onclick="HideNotification" aria-label="@Constants.AriaClose"></button>
+            <button
+                type="button"
+                class="btn-close btn-close-white me-2 m-auto"
+                @onclick="HideNotification"
+                aria-label="@Constants.AriaClose"
+            >
+            </button>
         </div>
     </div>
 </div>
@@ -30,6 +37,11 @@
     protected override void OnInitialized()
     {
         NotificationService.OnShowNotification += ShowNotification;
+    }
+
+    public void Dispose()
+    {
+        NotificationService.OnShowNotification -= ShowNotification;
     }
 
     /// <summary>

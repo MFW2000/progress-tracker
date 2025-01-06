@@ -21,6 +21,7 @@ public interface ITrackerService
     /// Validate and create a new tracker item to save in the local browser storage.
     /// </summary>
     /// <param name="newTracker">The tracker to be created.</param>
+    /// <exception cref="ProgressTrackerException">Thrown if the new tracker is not valid.</exception>
     Task CreateTracker(Tracker newTracker);
 
     /// <summary>
@@ -33,6 +34,7 @@ public interface ITrackerService
     /// Delete the tracker item with the given ID from local browser storage.
     /// </summary>
     /// <param name="trackerId">The ID of the tracker to be deleted.</param>
+    /// <exception cref="ProgressTrackerException">Thrown when no tracker items could be found.</exception>
     Task DeleteTracker(Guid trackerId);
 
     /// <summary>

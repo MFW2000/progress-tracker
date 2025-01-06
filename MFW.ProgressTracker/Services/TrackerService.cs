@@ -55,11 +55,9 @@ public class TrackerService(
         {
             ValidateTrackerData(newTracker);
         }
-        catch (Exception exception)
+        catch (ArgumentException exception)
         {
-            notificationService.ShowNotification(SemanticVariant.Warning, exception.Message);
-
-            return;
+            throw new ProgressTrackerException(exception.Message);
         }
 
         var trackers = await GetTrackers();
@@ -77,9 +75,7 @@ public class TrackerService(
 
         if (isExistingTracker)
         {
-            notificationService.ShowNotification(SemanticVariant.Warning, Constants.TrackerAlreadyExistsException);
-
-            return;
+            throw new ProgressTrackerException(Constants.TrackerAlreadyExistsException);
         }
 
         trackers.Add(newTracker);
@@ -90,6 +86,8 @@ public class TrackerService(
     /// <inheritdoc/>
     public async Task UpdateTracker(Tracker updatedTracker)
     {
+        // TODO: Refactor error handling.
+
         try
         {
             ValidateTrackerData(updatedTracker);
@@ -131,9 +129,7 @@ public class TrackerService(
 
         if (trackers.Count == 0)
         {
-            notificationService.ShowNotification(SemanticVariant.Warning, Constants.NoTrackersToDeleteException);
-
-            return;
+            throw new ProgressTrackerException(Constants.NoTrackersToDeleteException);
         }
 
         trackers.RemoveAll(tracker => tracker.Id == trackerId);
